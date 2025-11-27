@@ -2,7 +2,7 @@
 
 _Last updated: 2025-11-27_
 
-Think of this page as the friendlier, product-focused tour of Crush. We’ll walk through what students see, why the daily drops feel intentional, and how we keep the community safe—without dumping raw technical docs on you. Need the fine print? Check the [Terms of Service](../legal/terms-of-service.md), [Privacy Policy](../legal/privacy-policy.md), or the engineering-heavy [data inventory](../privacy/data-inventory.md).
+Think of this page as the friendlier, product-focused tour of Crush. We’ll walk through what students see, why the daily drops feel intentional, and how we keep the community safe—without dumping raw technical docs on you. Need the fine print? Check the [Terms of Service](../legal/terms-of-service.md), [Privacy Policy](https://georgeobote.github.io/crush-policies/privacy-policy), or the engineering-heavy [data inventory](https://georgeobote.github.io/crush-policies/terms-of-service).
 
 ## 1. Eligibility & Onboarding
 
