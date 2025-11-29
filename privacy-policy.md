@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2025-11-21_
+_Last updated: 2025-11-29_
 
 Crush (“we”, “us”, “our”) provides a college-only dating application that relies on SMS authentication, `.edu` email verification, swipe-based discovery, Crush Drop scheduling, in-app chat, and Firebase-hosted infrastructure. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you. It complements the technical inventory found in `docs/privacy/data-inventory.md`; if anything conflicts, this policy controls.
 
@@ -8,11 +8,11 @@ Crush (“we”, “us”, “our”) provides a college-only dating application
 
 We collect the following categories of data when you use the app:
 
-1. **Account & Identity Data:** Display name, phone number, `.edu` email, school, graduation year, gender, age, Greek-life affiliation, majors, clubs, athletics, looking-for preferences, preferred drop scope, and Firebase Auth identifiers.
-2. **Verification Data:** SMS verification codes, `.edu` email OTP attempts (hashed), school domain mapping, opt-in status for Crush Drop, and verification timestamps.
+1. **Account & Identity Data:** Display name, phone number, `.edu` email, school, graduation year, gender + “looking for”, age, Greek-life affiliation, majors, clubs/athletics, deal breakers, relationship intent, religion, height + optional preferred range, pet preference/has pets, smoking/drinking/going-out style, preferred drop scope, and Firebase Auth identifiers.
+2. **Verification Data:** SMS verification codes, `.edu` email OTP attempts (hashed with 10-minute TTL and 1-minute resend cooldown), school domain mapping, opt-in status for Crush Drop, and verification timestamps.
 3. **Profile Content (UGC):** Bios, prompts, photos uploaded to Firebase Storage, and any optional fields you share such as interests or Greek organization details.
-4. **Discovery & Location Data:** Scope selection (campus/state/nationwide), distance sliders, GPS coordinates (rounded to ~110 m), state and school-level fallback details, and presence timestamps.
-5. **Engagement & Messaging Data:** Swipe decisions, Crush Drop window history, matches, chat messages (stored in Firestore), like/match/message activity feed events, push tokens, notification preferences, and messaging rate-limit counters.
+4. **Discovery & Location Data:** Scope selection (campus/state/nationwide), distance sliders, GPS coordinates (rounded to ~110 m), state and school-level fallback details, time zone + school time zone, Crush Drop window assignments/statuses, and presence timestamps.
+5. **Engagement & Messaging Data:** Swipe decisions, Crush Drop window history (ready, matched, skipped, response deadlines), matches, chat messages (stored in Firestore), like/match/message activity feed events, push tokens, notification preferences, and messaging rate-limit counters.
 6. **Safety & Support Data:** Block lists, reports, support tickets, photo moderation outcomes, account deletion logs, and SafeSearch audit entries.
 7. **Device & Usage Data:** Firebase Analytics event identifiers, app version, OS type, and push token metadata (including last-seen timestamps).
 
@@ -22,10 +22,10 @@ We do not knowingly collect information from individuals under 18; using the app
 
 We process data for the following purposes:
 
-- **Service delivery:** Authenticate accounts, verify college enrollment, build swipe feeds, run Crush Drop scheduling, surface the spotlight modal, and deliver in-app messaging.
-- **Personalization & discovery:** Apply school themes, render profile cards, respect gender preferences, distance filters, and location-based scopes.
-- **Intelligent matching:** Score potential Crush Drop partners using profile completeness, shared majors/clubs, Greek-life participation, recent activity/presence, distance, and historical opt-in behavior so the campus-first algorithm can widen responsibly.
-- **Safety & integrity:** Enforce eligibility, detect abusive content, honor block lists, and moderate photos via Google Cloud Vision SafeSearch.
+- **Service delivery:** Authenticate accounts, verify college enrollment, build swipe feeds, run Crush Drop scheduling (shared random minutes per window in your time zone with eligibility gates like verified SMS/`.edu`, 3+ photos, gender/looking-for set), surface the spotlight modal, deliver ready/reminder/expire notifications during the 6-hour response window, and deliver in-app messaging.
+- **Personalization & discovery:** Apply school themes, render profile cards, and respect gender/height preferences, distance filters, location-based scopes, and the compatibility signals you choose to share (majors/clubs, Greek life, relationship intent, religion, pets, lifestyle habits).
+- **Intelligent matching:** Score potential Crush Drop partners using profile completeness, shared interests, activity/presence, distance, and chemistry factors (including the optional lifestyle + relationship signals above) so the campus-first algorithm can widen responsibly.
+- **Safety & integrity:** Enforce eligibility, deal breakers, and block lists; rate-limit messaging; and moderate photos via Google Cloud Vision SafeSearch.
 - **Communications:** Send SMS codes, `.edu` verification emails (via SendGrid), push notifications for matches/messages, and support responses.
 - **Analytics & diagnostics:** Monitor aggregate usage, message rate limits, and Crush Drop performance to keep the product stable and fair.
 - **Compliance:** Maintain data-retention records, user deletion logs, and evidence of opt-ins/consents for audit purposes.
@@ -42,8 +42,8 @@ All processors are bound by confidentiality and data protection agreements. We r
 
 ## Retention
 
-- SMS and `.edu` verification attempts are purged after the TTLs described in `functions/index.js`.
-- Swipes older than 90 days, inactive matches/messages after 30 days, and stale push tokens after 60 days are deleted automatically.
+- SMS and `.edu` verification attempts are purged after the TTLs described in `functions/index.js` (OTP expiry in ~10 minutes; attempts cleared after ~7 days).
+- Swipes older than 90 days, inactive matches/messages after 30 days, and stale push tokens after 60 days are deleted automatically. Activity feed entries follow a ~30-day retention.
 - Reports, support tickets, and presence logs currently follow manual retention schedules; we are building automated TTL + monitoring (see Open Gaps below).
 - Account deletions trigger Firestore + Storage cleanup plus an audit log entry.
 
@@ -84,4 +84,3 @@ Per `docs/privacy/data-inventory.md`, the following improvements are in progress
 - Admin access logging and monitoring for token purge jobs.
 
 We will update this policy once those controls are live.
-
