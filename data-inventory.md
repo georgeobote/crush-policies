@@ -1,6 +1,6 @@
 # Crush Data Inventory
 
-_Last updated: 2025-11-29_
+_Last updated: 2025-12-05_
 
 This inventory lists every place the product stores or processes user data so engineering, product, and legal can reason about consent, retention, access, and safety requirements. Update it whenever you add a new field, collection, queue, or third-party processor.
 
@@ -31,9 +31,9 @@ This inventory lists every place the product stores or processes user data so en
 | `support_requests` | Firestore | Help-center tickets | Basic | Support tooling | Same storage story as reports. |
 | `account_deletions` | Firestore | Deletion audit trail | Operational + Sensitive | Admin only | Needed for compliance evidence. |
 | `edu_verification` | Firestore | `.edu` email verification attempts | Sensitive | Cloud Functions only | Holds hashed codes; TTL required. |
-| `activity/{uid}/feed` | Firestore | Drop-ready notifications, interest confirmations, match/message events | Operational | Read-only to the owner; writes by Cloud Functions | Events auto-delete after 30 days via scheduled cleanup. |
+| `activity/{uid}/feed` | Firestore | Drop-ready notifications, interest confirmations, match/message events | Operational | Read-only to the owner; writes by Cloud Functions | No TTL yet; entries remain until account deletion or future cleanup job. |
 | (deprecated) `feeds` | Firestore | Pre-ranked swipe deck entries per viewer (candidate IDs, scores, scope metadata) | Basic + Operational | Backend only | Legacy artifact from swipe deck; references removed from the client. |
-| `Firebase Storage` | `gs://<project>/users/{uid}/photos/*` | Uploaded profile photos | UGC | Authenticated users only; owner write/delete | URLs stored in `users.photos`, scanned by SafeSearch, and purged automatically when an account is deleted or a photo is removed from the profile. Still need lifecycle rules for failed uploads/other orphaned files. |
+| `Firebase Storage` | `gs://<project>/users/{uid}/photos/*` | Uploaded profile photos | UGC | Authenticated users only; owner write/delete | URLs stored in `users.photos`, scanned by SafeSearch, deleted on account deletion/photo removal, and swept daily for unreferenced files. Still need lifecycle rules for failed uploads/other buckets. |
 | `photo_moderation` | Firestore | SafeSearch results + actions per upload | Operational | Backend/admin tooling | Audit trail for removed/flagged photos. |
 | Firebase Auth | Managed service | UID, phone number, auth factors | Basic | Firebase Admin SDK | Must be in privacy policy. |
 | Push messaging | FCM/APNs | Device tokens + notification payloads | Operational | Firebase Messaging & Apple/Google | Payload contains match/user display names. FCM tokens that bounce with “not registered” are pruned immediately, and a daily job removes tokens whose `lastSeen` is older than 60 days. |
@@ -56,7 +56,7 @@ Public-facing data is copied into `publicProfiles/{uid}` by `functions/index.js:
 | Verification state | `phoneVerified`, `eduVerified`, `updatedAt`, `lastCrushDropAt` | Gate access to features and Crush Drop cadence | Sensitive | Indefinite | Consider logging verification timestamp for audit. |
 | Safety & presence | `online`, `lastActiveAt`, `location` (`latitude`, `longitude`, `source`, `updatedAt`) | Presence indicator, location-based feed, harassment mitigation | Sensitive | Location refreshed max every 30 min; stored indefinitely | Add TTL or precision-reduction policy; make opt-out explicit. |
 
-**Access assumptions:** Firestore security rules should ensure users only read their own full document; swipe feed queries rely on server-side filtering but still read other users’ public fields (display name, photos, school, greek org, optional location). Confirm rules mirror the minimum fields exposed in UI.
+**Access assumptions:** Firestore security rules allow users to read their own full document and signed-in clients to read `publicProfiles` only; all writes for matches/messages/drops go through Cloud Functions, not the client.
 
 ## Subcollection `users/{uid}/blocked`
 | Fields | Purpose | Sensitivity | Access | Retention |
@@ -101,7 +101,7 @@ When blocking, the app also updates `users.blockedUserIds` and deletes overlappi
 | `uid`, `reason`, `requestedAt` | Audit log proving deletion fulfillment | Sensitive | Admin only | Keep at least 2 years to satisfy regulatory inquiries. |
 
 ## Collection `edu_verification`
-Maintained only by Cloud Functions—clients never read/write directly.
+Maintained only by Cloud Functions, clients never read/write directly.
 
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
@@ -110,7 +110,7 @@ Maintained only by Cloud Functions—clients never read/write directly.
 ## Firebase Storage `users/{uid}/photos`
 | Data | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
-| Original uploads plus metadata (`contentType`, `storagePath`) | Profile photo gallery | UGC | Authenticated users only (Firebase Storage rules require ID token); owners can write/delete | Account deletion and per-photo removals trigger backend cleanup of Storage objects + moderation logs, and SafeSearch auto-deletes blatant violations. Still need lifecycle rules for failed uploads/other orphaned files. |
+| Original uploads plus metadata (`contentType`, `storagePath`) | Profile photo gallery | UGC | Authenticated users only (Firebase Storage rules require ID token); owners can write/delete | Account deletion and per-photo removals trigger backend cleanup of Storage objects + moderation logs, a daily sweep deletes unreferenced files under `users/*/photos`, and SafeSearch auto-deletes blatant violations. Still need lifecycle rules for failed uploads/other orphaned files outside that prefix. |
 
 ## Collection `photo_moderation`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
@@ -125,7 +125,7 @@ Maintained only by Cloud Functions—clients never read/write directly.
 ## Push notification ecosystem
 | Component | Data | Purpose / Notes |
 | --- | --- | --- |
-| Firestore `users.fcmTokens` | Strings per device | Saved by `NotificationService`; used to address push notifications. Invalid tokens are pruned when FCM rejects them, and `fcmTokenLastSeen` timestamps feed a daily cleanup job that removes tokens older than 60 days. |
+| Firestore `users.fcmTokens` | Strings per device | Saved by `NotificationService`; used to address push notifications. Invalid tokens are pruned when FCM rejects them. `fcmTokenLastSeen` timestamps are stored but there is no scheduled cleanup yet. |
 | FCM/APNs payloads | `title`, `body`, `matchId`, `notificationType`, `senderId` | Set by `functions/index.js` in `onMatchCreated` and chat message triggers; payload content must align with privacy policy. |
 | Device OS | Receives payload + stores token | Ensure mobile apps surface notification settings and respect `notify*` toggles. |
 
@@ -141,11 +141,11 @@ Maintained only by Cloud Functions—clients never read/write directly.
 The campus-first matcher evaluates each drop on the fly using existing fields already listed in this inventory (`photosCount`, `lastActiveAt`, `major`, `clubs`, `athletics`, `inGreekLife`, `scope`, `campusRadiusMiles`, `stateRadiusMiles`, and coarse `location`). No separate score documents are stored; values are read, scored in memory, and discarded once a match decision is made. Documenting the signal list here ensures privacy/legal reviewers know which inputs feed the automated pairing logic.
 
 ## Open gaps / decisions
-1. **Retention:** Purge jobs now remove expired `edu_verification` docs and inactive matches/messages after 30 days. Need new TTL/cleanup for legacy `swipes`, `crushDropWindows` history, reports, and presence logs, plus monitoring for the three daily scheduler jobs.
+1. **Retention:** No automated TTL/cleanup jobs yet for `edu_verification`, matches/messages/activity, legacy `swipes`, or drop notifications; only account deletion clears data today. Define retention windows and implement Firestore TTL/scheduled cleanups (including token aging).
 2. **User controls:** Build a privacy dashboard (export/delete data, notification toggles, location precision choice) that maps 1:1 with the fields above.
 3. **Access controls:** Document Firestore security rules per collection and ensure Trust & Safety tooling enforces least privilege when reading reports/support tickets.
-4. **Storage cleanup:** Account deletion and per-photo removal now delete Storage objects; still need lifecycle rules for failed uploads and other orphaned files.
+4. **Storage cleanup:** Account deletion and per-photo removal now delete Storage objects, and a daily sweep removes unreferenced photos under `users/*/photos`. Still need lifecycle rules for failed uploads/other buckets and monitoring for the sweep.
 5. **Audit logging:** Log admin access to sensitive collections (`reports`, `support_requests`, `account_deletions`) for compliance audits.
-6. **Push token retention:** Document the 60-day purge window, surface it in user-facing disclosures, and add monitoring for the cleanup job so failures are caught quickly.
+6. **Push token retention:** Add scheduled cleanup based on `fcmTokenLastSeen` timestamps and alerting so invalid/stale tokens are removed even without an FCM error.
 
 Keep this document versioned. When product specs or backend schemas change, update the relevant section and tag legal/safety stakeholders for review.
