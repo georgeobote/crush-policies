@@ -1,58 +1,55 @@
 # Privacy Policy
 
-_Last updated: 2025-11-29_
+_Last updated: 2025-12-05_
 
-Crush (“we”, “us”, “our”) provides a college-only dating application that relies on SMS authentication, `.edu` email verification, swipe-based discovery, Crush Drop scheduling, in-app chat, and Firebase-hosted infrastructure. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you. It complements the technical inventory found in `docs/privacy/data-inventory.md`; if anything conflicts, this policy controls.
+Crush (“we”, “us”, “our”) is a college-only dating app that uses SMS login, `.edu` email verification, daily Crush Drop windows (three scheduled reveal minutes per day hashed by time zone), and in-app chat on Firebase + Cloud Functions. There is no swipe deck in the current release. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you. See `docs/privacy/data-inventory.md` for a field-by-field breakdown; if anything conflicts, this policy controls.
 
 ## Information We Collect
 
 We collect the following categories of data when you use the app:
 
-1. **Account & Identity Data:** Display name, phone number, `.edu` email, school, graduation year, gender + “looking for”, age, Greek-life affiliation, majors, clubs/athletics, deal breakers, relationship intent, religion, height + optional preferred range, pet preference/has pets, smoking/drinking/going-out style, preferred drop scope, and Firebase Auth identifiers.
-2. **Verification Data:** SMS verification codes, `.edu` email OTP attempts (hashed with 10-minute TTL and 1-minute resend cooldown), school domain mapping, opt-in status for Crush Drop, and verification timestamps.
-3. **Profile Content (UGC):** Bios, prompts, photos uploaded to Firebase Storage, and any optional fields you share such as interests or Greek organization details.
-4. **Discovery & Location Data:** Scope selection (campus/state/nationwide), distance sliders, GPS coordinates (rounded to ~110 m), state and school-level fallback details, time zone + school time zone, Crush Drop window assignments/statuses, and presence timestamps.
-5. **Engagement & Messaging Data:** Swipe decisions, Crush Drop window history (ready, matched, skipped, response deadlines), matches, chat messages (stored in Firestore), like/match/message activity feed events, push tokens, notification preferences, and messaging rate-limit counters.
-6. **Safety & Support Data:** Block lists, reports, support tickets, photo moderation outcomes, account deletion logs, and SafeSearch audit entries.
-7. **Device & Usage Data:** Firebase Analytics event identifiers, app version, OS type, and push token metadata (including last-seen timestamps).
+1. **Account & Identity Data:** Display name, phone number, `.edu` email, school and state, graduation year, gender + “looking for”, age, Greek-life affiliation, majors, clubs/athletics, relationship intent, religion, height + optional preferred range, pet preference/has pets, smoking/drinking/going-out style, deal breakers, theme preference, and Firebase Auth identifiers.
+2. **Verification Data:** Phone verification state from Firebase Auth plus `.edu` email OTP attempts (hashed with a ~10-minute expiry, 1-minute resend cooldown, and school/time zone mapping) stored in the `edu_verification` collection.
+3. **Profile Content (UGC):** Bio and profile photos you upload to Firebase Storage, including any optional Greek organization details or interests you add.
+4. **Discovery, Location & Presence Data:** Scope selection (campus/state/nationwide) and radius sliders, Crush Drop opt-in, time zone + school time zone, GPS coordinates (with source + timestamp) or campus fallback, Crush Drop window metadata (`dateKey`, status, scheduled minute, expiry), and presence (`online`, `lastActiveAt`). Public profiles store coarse (~3 decimal) location and presence bucketed to 15-minute intervals.
+5. **Engagement & Messaging Data:** Crush Drop activity feed entries, match records (participants, participantInterest, chatUnlocked, matchWindow labels/timestamps), chat messages, drop notification queue entries (ready/reminder/expire), push tokens + last-seen metadata, messaging rate-limit counters, badge counts, block lists, and account deletion audit logs.
+6. **Safety & Support Data:** Reports, support requests, SafeSearch moderation results and actions for photos, and removal logs for deleted photos.
+7. **Device & Usage Data:** App version, device/OS type, Firebase Analytics event identifiers, and basic diagnostics used to monitor delivery of notifications and drops. No marketing trackers are present.
 
 We do not knowingly collect information from individuals under 18; using the app requires a qualifying `.edu` address and college enrollment.
 
 ## How We Use Your Information
 
-We process data for the following purposes:
-
-- **Service delivery:** Authenticate accounts, verify college enrollment, build swipe feeds, run Crush Drop scheduling (shared random minutes per window in your time zone with eligibility gates like verified SMS/`.edu`, 3+ photos, gender/looking-for set), surface the spotlight modal, deliver ready/reminder/expire notifications during the 6-hour response window, and deliver in-app messaging.
+- **Service delivery:** Authenticate accounts, verify college enrollment, prepare Crush Drop windows (deterministic shared minute per time zone), surface spotlight reveals, process Like/Pass responses with double opt-in before chat unlocks, and deliver chat via a server-side function with rate limits.
 - **Personalization & discovery:** Apply school themes, render profile cards, and respect gender/height preferences, distance filters, location-based scopes, and the compatibility signals you choose to share (majors/clubs, Greek life, relationship intent, religion, pets, lifestyle habits).
-- **Intelligent matching:** Score potential Crush Drop partners using profile completeness, shared interests, activity/presence, distance, and chemistry factors (including the optional lifestyle + relationship signals above) so the campus-first algorithm can widen responsibly.
-- **Safety & integrity:** Enforce eligibility, deal breakers, and block lists; rate-limit messaging; and moderate photos via Google Cloud Vision SafeSearch.
-- **Communications:** Send SMS codes, `.edu` verification emails (via SendGrid), push notifications for matches/messages, and support responses.
-- **Analytics & diagnostics:** Monitor aggregate usage, message rate limits, and Crush Drop performance to keep the product stable and fair.
-- **Compliance:** Maintain data-retention records, user deletion logs, and evidence of opt-ins/consents for audit purposes.
+- **Intelligent matching:** Score potential Crush Drop partners using profile completeness, shared interests, recency/presence, distance, and chemistry factors (including the optional lifestyle + relationship signals above) while enforcing deal breakers and block lists.
+- **Safety & integrity:** Enforce eligibility, deal breakers, and block lists; round public location/presence data; scan photos with Google Cloud Vision SafeSearch and delete/flag when needed; and throttle message sends.
+- **Communications:** Send SMS codes, `.edu` verification emails (via SendGrid), push notifications for drops (ready/reminder/expire), matches, messages, and support responses. No marketing email is sent today.
+- **Analytics & diagnostics:** Monitor aggregate usage, notification delivery, and Crush Drop performance to keep the product stable and fair.
+- **Compliance:** Maintain deletion audit logs and verification evidence needed to operate a college-only network.
 
 ## How We Share Information
 
 We do not sell personal data. We share it only with:
 
 - **Service providers:** Firebase (Auth, Firestore, Storage, Analytics, Cloud Messaging, Cloud Functions), Google Cloud Vision, and SendGrid for `.edu` emails.
-- **Other users:** Profiles, matches, chat messages, and presence indicators are visible only to participants consistent with Firestore security rules.
+- **Other users:** Signed-in users can view sanitized `publicProfiles` (display name, bio, photos, verification flags, coarse location/presence, school) and see match/chat data only when they are a participant, consistent with Firestore security rules.
 - **Legal & safety recipients:** We may disclose information to comply with law, enforce our Terms, or protect the rights and safety of users.
 
 All processors are bound by confidentiality and data protection agreements. We remain responsible for their handling of your data.
 
 ## Retention
 
-- SMS and `.edu` verification attempts are purged after the TTLs described in `functions/index.js` (OTP expiry in ~10 minutes; attempts cleared after ~7 days).
-- Swipes older than 90 days, inactive matches/messages after 30 days, and stale push tokens after 60 days are deleted automatically. Activity feed entries follow a ~30-day retention.
-- Reports, support tickets, and presence logs currently follow manual retention schedules; we are building automated TTL + monitoring (see Open Gaps below).
-- Account deletions trigger Firestore + Storage cleanup plus an audit log entry.
+- `.edu` verification attempts store hashed codes with a ~10-minute expiry and 1-minute resend cooldown; entries are deleted on successful verification or when the code is rejected/expired during a confirm attempt. There is no scheduled sweep for stale entries yet.
+- Profile, discovery, drop windows, matches, messages, activity entries, reports/support tickets, and token metadata persist while the account is active; there is no automated TTL cleanup today. Invalid push tokens are removed when FCM marks them unregistered, photo removals trigger Storage cleanup, and a daily sweep deletes unreferenced photos from Storage.
+- Account deletion removes the user document, blocked list, matches + chat threads, drop notifications, activity feed, public profile, and Storage photos, logs the request in `account_deletions`, and deletes the Firebase Auth user.
 
 ## Your Choices & Rights
 
 - **Access & export:** A privacy dashboard with export/delete tooling is on our roadmap. Until then, contact us at privacy@crushso.com to request data access or removal.
 - **Delete:** You can delete your account from the Safety & privacy screen; this triggers the `deleteAccount` Cloud Function described in the repository.
 - **Notifications:** Toggle match, message, and Crush Drop notifications under Settings → Alerts or through system-level push controls.
-- **Location:** You can revoke OS-level location access or adjust discovery scopes inside the app; doing so may limit match relevance.
+- **Location:** Update GPS or campus fallback in Discovery settings. Revoking OS-level location stops GPS updates; if you stay opted in to Crush Drop we still use your school/campus details for time zone and scope.
 
 ## International Transfers
 
@@ -60,7 +57,7 @@ Data is hosted in Firebase’s U.S. regions. If you access the app from outside 
 
 ## Security
 
-We rely on Firebase’s encryption at rest/in transit, hashed verification codes, Firestore security rules, and internal tooling for least-privilege access. We are implementing audit logging for administrative reads of sensitive collections.
+We rely on Firebase’s encryption at rest/in transit, hashed verification codes, Firestore security rules that require authentication, coarse public location/presence, SafeSearch photo moderation, and server-side messaging with rate limits. Admin/audit logging for sensitive reads is planned.
 
 ## Children
 
@@ -72,13 +69,13 @@ We will update this policy when we add new fields, processors, or retention sche
 
 ## Contact
 
-Email hello@crushso.com for questions, data requests, or privacy complaints. If you are in the EU/UK, you may also contact your local supervisory authority.
+Email privacy@crushso.com for questions, data requests, or privacy complaints. If you are in the EU/UK, you may also contact your local supervisory authority.
 
 ## Open Gaps & Roadmap
 
 Per `docs/privacy/data-inventory.md`, the following improvements are in progress:
 
-- Automated retention for reports and presence logs.
+- Automated retention for verification attempts, drop activity, reports, tokens, and inactive matches/messages.
 - Privacy dashboard for export/delete/location precision controls.
 - Lifecycle rules for orphaned Storage uploads.
 - Admin access logging and monitoring for token purge jobs.
