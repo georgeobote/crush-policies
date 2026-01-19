@@ -1,6 +1,6 @@
 # How Crush Works
 
-_Last updated: 2025-12-05_
+_Last updated: 2026-01-04_
 
 Think of this page as the friendlier, product-focused tour of Crush. We’ll walk through what students see, why the daily drops feel intentional, and how we keep the community safe, without dumping raw technical docs on you. Need the fine print? Check the [Terms of Service](https://georgeobote.github.io/crush-policies/terms-of-service), [Privacy Policy](https://georgeobote.github.io/crush-policies/privacy-policy), or the engineering-heavy [data inventory](https://georgeobote.github.io/crush-policies/data-inventory).
 
@@ -15,28 +15,28 @@ Think of this page as the friendlier, product-focused tour of Crush. We’ll wal
 
 - Everyone starts with our “Neutral earth” palette, warm, calm, and easy on the eyes.
 - Verified students can toggle to their school pride theme anytime from Settings → Appearance. It instantly swaps the UI to your campus colors.
-- Compatibility uses the signals you add: majors/clubs, Greek life, location scopes, relationship intent, religion, pets, height + preferred ranges, smoking/drinking/going-out style, and optional deal breakers (same campus only, Greek-life only/skip, athlete-only/skip).
+- Compatibility uses the signals you add: majors/clubs, Greek life, location scopes, relationship intent, religion, pets, height + preferred ranges, age + grad year, smoking/drinking/going-out style, and optional deal breakers (same school only, Greek-life only/skip, athlete-only/skip).
 - We keep track of school coordinates so your countdowns, drop windows, and notifications stay in the right time zone even if you travel.
 
 ## 3. Crush Drop Windows
 
-- **Three drop slots:** Morning (10–11 AM), afternoon (3–4 PM), and evening (8–9 PM) in your school’s time zone. Each day we hash the time zone + window to pick one shared minute so the reveal feels like a “BeReal” moment for everyone nearby.
+- **Three drop slots:** Morning (10–11 AM), afternoon (3–4 PM), and evening (8–9 PM) in your school’s time zone. Each day we hash the time zone + date + window to pick one shared minute so the reveal feels like a “BeReal” moment for everyone nearby.
 - **Stay photo-ready:** Drops only run if you keep the `Crush Drop` toggle on, maintain at least three approved photos, and have verified SMS + `.edu` with gender + “looking for” set. Fall below that, and we pause things until you’re ready again.
-- **Response timers:** Matched windows carry a 6-hour response clock with ready/reminder/expire notifications. If neither side answers in time, we roll forward and log it so fairness and analytics stay intact.
-- **Transparent history:** Every window stores whether it was pending, revealed, matched, or skipped so you can see how the week went and we can make sure everyone gets a fair shot.
+- **Response timers:** Matched windows stay open until local midnight with ready/reminder/expire notifications. If neither side answers in time, we roll forward and log it so fairness and analytics stay intact.
+- **Transparent history:** Every window stores whether it was upcoming, matching, matched, no match, or skipped so you can track how the day went and we can keep drops fair.
 
 ## 4. Matching Intelligence
 
-1. **Campus-first always:** We try your classmates first. If sparks aren’t flying, we slowly widen to nearby schools, then statewide, and finally nationwide, with heavier filters so long-distance matches really feel worth it.
-2. **Balanced scoring:** Major, clubs, Greek life, profile completeness, recency, distance, height alignment, relationship intent, religion, pet preferences, and lifestyle signals (smoking, drinking, going out) all feed the behind-the-scenes score.
-3. **Guardrails before scoring:** We enforce gender + height preferences, deal breakers (same-campus only, Greek filters, athlete-only/skip), block lists, and “already matched” checks before we ever surface a candidate.
+1. **Campus-first always:** We start with your campus, then expand to state and nationwide if needed. Distance penalties for off-campus/out-of-state matches help keep long-distance intentional, and we occasionally sample a wider radius to avoid stale pools.
+2. **Balanced scoring:** Recent activity + profile freshness, distance, shared majors/clubs, Greek life, photo count, age + grad year alignment, height alignment (including preferred ranges), relationship intent, religion, pets, and lifestyle signals (smoking, drinking, going out) feed the behind-the-scenes score.
+3. **Guardrails before scoring:** We enforce mutual gender preferences, deal breakers (same school only, Greek-life only/skip, athlete-only/skip), block lists, same-day repeat-pair blocks, and existing-match checks before we ever surface a candidate.
 4. **Shared reveal moments:** As soon as a match is confirmed, both people get slotted into the same upcoming drop window so the spotlight reveal happens together.
 
 ## 5. Spotlight Reveal & Decisions
 
 - When your drop minute arrives, the app fades everything else out and spotlights the match with their lead photo, school flair, shared interests, and lifestyle callouts.
 - Tap **Like** to lean in or **Pass** to skip. Both people must tap Like before chat unlocks, classic double opt-in. You can always open the Daily Drops list to revisit active windows before the response timer expires.
-- We quietly log decisions so the matcher learns your preferences and we can make sure window stats stay accurate.
+- We quietly log decisions so we can improve matching over time and keep window stats accurate.
 
 ## 6. Chat, Safety & Reporting
 
