@@ -2,7 +2,7 @@
 
 _Last updated: 2026-01-18_
 
-Crush (“we”, “us”, “our”) is a college-only dating app that uses SMS login, `.edu` email verification, daily Crush Drop windows (three scheduled reveal minutes per day hashed by time zone), and in-app chat on Firebase + Cloud Functions. There is no swipe deck in the current release. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you. See `docs/privacy/data-inventory.md` for a field-by-field breakdown; if anything conflicts, this policy controls.
+Crush (“we”, “us”, “our”) is a college-only dating app that uses SMS login, `.edu` email verification, daily Crush Drop windows (three scheduled reveal minutes per day hashed by time zone), and in-app chat on Firebase + Cloud Functions. There is no swipe deck in the current release. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you. See [`docs/privacy/data-inventory.md`](https://georgeobote.github.io/crush-policies/data-inventory) for a field-by-field breakdown; if anything conflicts, this policy controls.
 
 ## Information We Collect
 
