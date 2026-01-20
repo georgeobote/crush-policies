@@ -1,8 +1,8 @@
 # Terms of Service
 
-_Last updated: 2025-12-05_
+_Last updated: 2026-01-20_
 
-These Terms of Service (“Terms”) govern your use of Crush, the college-only dating experience operated by Swag Labs, Inc. By creating an account, accessing the app, or participating in any feature (SMS login, `.edu` verification, Crush Drop windows, matches, chat, push notifications), you agree to these Terms. If you disagree, do not use the service.
+These Terms of Service (“Terms”) govern your use of Crush, the college-only dating experience operated by Unyime George Obote II. By creating an account, accessing the app, or participating in any feature (SMS login, `.edu` verification, Crush Drop windows, matches, chat, push notifications), you agree to these Terms. If you disagree, do not use the service.
 
 ## 1. Eligibility & Accounts
 
