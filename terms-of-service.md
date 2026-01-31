@@ -2,12 +2,12 @@
 
 _Last updated: 2026-01-20_
 
-These Terms of Service (“Terms”) govern your use of Crush, the college-only dating experience operated by Unyime George Obote II. By creating an account, accessing the app, or participating in any feature (SMS login, `.edu` verification, Crush Drop windows, matches, chat, push notifications), you agree to these Terms. If you disagree, do not use the service.
+These Terms of Service ("Terms") govern your use of Crush, the campus connection experience operated by Unyime George Obote II. By creating an account, accessing the app, or participating in any feature (SMS login, `.edu` verification, Crush Drop windows, matches, chat, push notifications), you agree to these Terms. If you disagree, do not use the service.
 
 ## 1. Eligibility & Accounts
 
 1. You must be at least 18 years old, currently enrolled at an accredited college or university, and able to verify a valid `.edu` email address.
-2. You must provide accurate registration information and keep it up to date (display name, phone number, `.edu` email, school, graduation year, etc.). If you share optional compatibility signals (height, intent, religion, pets, lifestyle, deal breakers), you consent to us using them for matching.
+2. You must provide accurate registration information and keep it up to date (display name, phone number, `.edu` email, school, graduation year, etc.). If you share optional compatibility signals (connection goals, religion, pets, lifestyle, deal breakers), you consent to us using them for pairing.
 3. Each user may maintain one account. You are responsible for safeguarding your login credentials and device. Notify us immediately of unauthorized use.
 4. Crush Drops require verified SMS + `.edu`, a set gender + “looking for” selection, and at least three approved photos. Falling below those gates may pause access to Crush Drop features until resolved.
 
@@ -26,7 +26,7 @@ These Terms of Service (“Terms”) govern your use of Crush, the college-only 
    - Harass, stalk, threaten, spam, or otherwise abuse users.  
    - Attempt to scrape, reverse engineer, or bypass technical protections.  
    - Use the service for advertising, pyramid schemes, or solicitation.
-3. We may remove content, limit visibility, or terminate accounts for violations without prior notice.
+3. We have zero tolerance for objectionable content or abusive behavior. We may remove content, limit visibility, or terminate accounts for violations without prior notice.
 
 ## 4. User Content
 
@@ -38,12 +38,13 @@ These Terms of Service (“Terms”) govern your use of Crush, the college-only 
 
 1. Use the in-app safety tools to block or report users who violate these Terms. Blocks are mutual and remove visibility in Crush Drop results and matches.
 2. Reports may trigger limited disclosure to trust & safety personnel and, when required, law enforcement.
-3. We do not guarantee compatibility or personal safety; meet others responsibly and follow local guidance.
+3. We aim to review and respond to reports within 24 hours.
+4. We do not guarantee compatibility or personal safety; meet others responsibly and follow local guidance.
 
-## 6. Crush Drops, Intelligent Matching & Notifications
+## 6. Crush Drops, Intelligent Pairing & Notifications
 
-1. Crush Drop is the primary discovery surface. Our matcher evaluates opted-in students three times per day in their school time zone (shared hashed minute per window), prioritizing campus matches before widening to statewide/nationwide options when necessary. Scoring considers items you add to your profile (major, clubs, Greek-life participation, relationship intent, religion, pets, height + preferences, lifestyle choices, activity recency, location scope). You can toggle participation and adjust scopes in Settings → Discovery.
-2. Each drop requires double opt-in. Both participants must tap Like before chat unlocks, and the app may surface spotlight-style reveals or reminders when a drop is ready. Drops carry response timers; if neither side responds in time, we may close the window and move on.
+1. Crush Drop is the primary discovery surface. Our matcher evaluates opted-in students three times per day in their school time zone (shared hashed minute per window), prioritizing campus matches before widening to statewide/nationwide options when necessary. Scoring considers items you add to your profile (major, clubs, Greek-life participation, connection goals, religion, pets, lifestyle choices, activity recency, location scope). You can toggle participation and adjust scopes in Settings → Discovery.
+2. Each drop requires double opt-in. Both participants must tap Meet before chat unlocks, and the app may surface spotlight-style reveals or reminders when a drop is ready. Drops carry response timers; if neither side responds in time, we may close the window and move on.
 3. We may send push notifications or emails for drops, matches, messages, and service updates. You control these settings via the app and OS-level controls.
 
 ## 7. Paid Features
