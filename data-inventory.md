@@ -1,6 +1,6 @@
 # Crush Data Inventory
 
-_Last updated: 2026-01-15_
+_Last updated: 2026-01-28_
 
 This inventory lists every place the product stores or processes user data so engineering, product, and legal can reason about consent, retention, access, and safety requirements. Update it whenever you add a new field, collection, queue, or third-party processor.
 
@@ -21,15 +21,15 @@ This inventory lists every place the product stores or processes user data so en
 | --- | --- | --- | --- | --- | --- |
 | `users` collection | Firestore | Profile, preferences, verification state, notifications, location, tokens | Basic + Sensitive + UGC | Owner (per-user), backend functions, admin tooling | Source of truth; see detailed table below. |
 | `system` collection | Firestore | Backfill state docs (e.g., `schoolTimeZoneBackfill` last processed user ID + timestamps) | Operational + Basic | Backend only | Internal state for backfills and migrations; delete when jobs complete. |
-| `publicProfiles` collection | Firestore | Public-facing profile + compatibility fields (name, bio, photos, age, graduation year, major, clubs/athletics, school/state, Greek life, gender/lookingFor, height if shared, deal breakers, verification flags) | Basic + Sensitive | Backend only; clients receive derived payloads via callable for matches/candidates | Derived view for server-side lookups and match activity; omits phone, email, tokens. |
+| `publicProfiles` collection | Firestore | Public-facing profile + compatibility fields (name, bio, photos, age, graduation year, major, clubs/athletics, school/state, Greek life, gender/lookingFor, connection goals, primary connection goal, deal breakers, verification flags) | Basic + Sensitive | Backend only; clients receive derived payloads via callable for matches/candidates | Derived view for server-side lookups and match activity; omits phone, email, tokens, and intent-specific preference maps. |
 | `users/{uid}/blocked` | Firestore subcollection | Block list entries | Basic | Owner + backend cleanup | Used for safety + match filtering. |
 | `crushDropWindows` (fields on `users/{uid}`) | Firestore | Per-day window metadata (`dateKey`, `windowInstanceId`, `status`, `processedAt`), `timeZone`, `schoolTimeZone`, scope overrides | Operational | Owner + backend scheduler + drop UI | Drives the three local-time drops, fuels the campus-first intelligent matcher, and informs client countdowns/spotlights. |
-| `crushDropShortlists` | Firestore | Precomputed Crush Drop candidate shortlists (`userId`, `windowId`, `dateKey`, `timeZone`, `candidates`, `builtAt`, `version`) | Operational + Basic | Backend only | Scheduled cleanup removes entries after ~3 days; built to speed drop matching. |
+| `crushDropShortlists` | Firestore | Precomputed Crush Drop candidate shortlists (`userId`, `windowId`, `dateKey`, `timeZone`, `candidates`, `builtAt`, `version`) | Operational + Basic | Backend only | Scheduled cleanup removes entries after ~3 days; built to speed drop pairing. |
 | `swipes` | Firestore | Legacy viewer/target decisions | Operational | Read-only to the viewer; backend retains for audit | Writes disabled; keep until retention policy finalized. |
 | `matches` | Firestore | Match metadata, participant info, unread counters, `participantInterest`, `chatUnlocked`, `matchWindow` | Basic + Operational | Client (participants only), backend notifications | Includes double opt-in state, window labels for daily drops, and powers the spotlight reveal shown when a new drop arrives. |
-| `matches/{matchId}/participants` | Firestore subcollection | Match-only compatibility fields (relationship intent, pets, religion, smoking/drinking/going-out) + `updatedAt` | Basic + Sensitive | Match participants only, backend functions | Derived from `users/{uid}`; deleted when match is removed. |
+| `matches/{matchId}/participants` | Firestore subcollection | Match-only compatibility fields (pets, religion, smoking/drinking/going-out) + `updatedAt` | Basic + Sensitive | Match participants only, backend functions | Derived from `users/{uid}`; deleted when match is removed. |
 | `matches/{matchId}/presence` | Firestore subcollection | Match-only chat presence heartbeat (`updatedAt`) | Operational | Match participants only | Used to show “active now” in chat; updated while chat is open. |
-| `match_tombstones` | Firestore | Tombstones for deleted matches (`participants`, `archivedAt`) | Operational + Basic | Backend only | Prevents rematching; retention policy TBD. |
+| `match_tombstones` | Firestore | Tombstones for deleted matches (`participants`, `archivedAt`) | Operational + Basic | Backend only | Prevents repeat matches; retention policy TBD. |
 | `messages/{matchId}/thread` | Firestore | Chat messages + attachment metadata (image storage paths, Tenor GIF URLs) + edit/delete markers | UGC | Only participants + moderation tooling | Needs retention + abuse workflow. |
 | `typing/{matchId}/users` | Firestore | Typing indicators (`typing`, `updatedAt`) | Operational | Only match participants | Ephemeral; should be short-lived and overwritten frequently. |
 | `reports` | Firestore | Safety reports | Sensitive | Trust & Safety tooling only | Contains free-form text; restrict access. |
@@ -39,14 +39,14 @@ This inventory lists every place the product stores or processes user data so en
 | `edu_verification` | Firestore | `.edu` email verification attempts | Sensitive | Cloud Functions only | Holds hashed codes; TTL required. |
 | `activity/{uid}/feed` | Firestore | Drop-ready notifications, interest confirmations, match/message events | Operational | Read-only to the owner; writes by Cloud Functions | No TTL yet; entries remain until account deletion or future cleanup job. |
 | `crushDropNotifyQueue` | Firestore | Drop notification jobs (`type`, `matchId`, `runAt`, status/attempts timestamps) | Operational + Basic | Backend only | No TTL yet; entries removed on account deletion for related matches. |
-| `crushDropPairingQueue` | Firestore | Pairing queue jobs for Crush Drop windows (`windowId`, `timeZone`, `dateKey`, `runAt`, status, cursors, counts) | Operational | Backend only | Drives batched matching before/during drop windows; cleaned after ~7 days. |
+| `crushDropPairingQueue` | Firestore | Pairing queue jobs for Crush Drop windows (`windowId`, `timeZone`, `dateKey`, `runAt`, status, cursors, counts) | Operational | Backend only | Drives batched pairing before/during drop windows; cleaned after ~7 days. |
 | `mlEvents` | Firestore | Crush Drop impressions, responses, and outcome logs with score feature snapshots | Operational + Basic + Sensitive (derived) | Backend only | TTL planned via `expiresAt` (target 180 days). |
 | (deprecated) `feeds` | Firestore | Pre-ranked swipe deck entries per viewer (candidate IDs, scores, scope metadata) | Basic + Operational | Backend only | Legacy artifact from swipe deck; references removed from the client. |
 | `Firebase Storage` | `gs://<project>/users/{uid}/photos/*` | Uploaded profile photos | UGC | Owner-only reads; owner write/delete | URLs stored in `users.photos`, scanned by SafeSearch, deleted on account deletion/photo removal, and swept daily for unreferenced files. Match/candidate views use short-lived signed URLs from Cloud Functions. |
 | `Firebase Storage` | `gs://<project>/messages/{matchId}/attachments/{uid}/*` | Legacy chat image attachments | UGC | Only match participants; owner write | Stored as Storage objects with metadata referenced by message docs; deleted when messages/matches are removed. |
 | `photo_moderation` | Firestore | SafeSearch results + actions per upload | Operational | Backend/admin tooling | Audit trail for removed/flagged photos. |
-| `photo_embeddings` | Firestore | Derived photo embeddings (numeric vectors) for ML training and matching | Sensitive (derived) | Backend only | Deleted when the related photo is removed; used to build user-level embeddings. |
-| `user_embeddings` | Firestore | Aggregated per-user photo embeddings for real-time matching | Sensitive (derived) | Backend only | Rebuilt on photo updates; removed on account deletion. |
+| `photo_embeddings` | Firestore | Derived photo embeddings (numeric vectors) for ML training and pairing | Sensitive (derived) | Backend only | Deleted when the related photo is removed; used to build user-level embeddings. |
+| `user_embeddings` | Firestore | Aggregated per-user photo embeddings for real-time pairing | Sensitive (derived) | Backend only | Rebuilt on photo updates; removed on account deletion. |
 | Firebase Auth | Managed service | UID, phone number, auth factors | Basic | Firebase Admin SDK | Must be in privacy policy. |
 | Push messaging | FCM/APNs | Device tokens + notification payloads | Operational | Firebase Messaging & Apple/Google | Payload contains match/user display names. FCM tokens that bounce with “not registered” are pruned immediately; scheduled cleanup based on `lastSeen` is still pending. |
 | Email delivery | SendGrid | `.edu` address + school metadata | Basic | Cloud Function, SendGrid logs | DPAs + unsubscribe flow required. |
@@ -56,17 +56,18 @@ This inventory lists every place the product stores or processes user data so en
 ## Firestore `users` collection
 Profiles are created/updated via `ProfileRepository` (`lib/services/profile_repository.dart`) and augmented by notification, presence, and safety services.
 
-Public-facing data is copied into `publicProfiles/{uid}` by `functions/index.js:syncPublicProfile` for backend use. Clients do not read this collection directly; instead, `getSwipeProfiles` returns match/candidate-approved profiles with short-lived signed photo URLs and a coarse distance bucket. Match-only compatibility fields (relationship intent, religion, pets, smoking/drinking/going-out) are stored under `matches/{matchId}/participants/{uid}` and are only readable by match participants. The canonical `users/{uid}` document stays owner-only; public profiles no longer include location/presence or block-list fields.
+Public-facing data is copied into `publicProfiles/{uid}` by `functions/index.js:syncPublicProfile` for backend use. Clients do not read this collection directly; instead, `getSwipeProfiles` returns match/candidate-approved profiles with short-lived signed photo URLs and a coarse distance bucket. Match-only compatibility fields (religion, pets, smoking/drinking/going-out) are stored under `matches/{matchId}/participants/{uid}` and are only readable by match participants. The canonical `users/{uid}` document stays owner-only; public profiles no longer include location/presence or block-list fields, but do include connection goals + the primary connection goal for matching.
 
 | Group | Fields | Purpose / feature | Sensitivity | Current retention | Notes / gaps |
 | --- | --- | --- | --- | --- | --- |
 | Identity & enrollment | `displayName`, `phoneNumber`, `eduEmail`, `major`, `gender`, `age`, `graduationYear`, `schoolId`, `stateCode`, `inGreekLife`, `greekOrganizationId`, `greekOrganizationLetters` | Build trust in profiles, enforce campus eligibility, filter by org | Basic + Sensitive | Stored until profile deletion; no automatic pruning | Need user-facing edit + delete controls; document lawful basis (consent vs legitimate interest). |
 | Profile content | `bio`, `athletics`, `clubs`, `photos` (+ `photosCount`), `blockedUserIds`, `hiddenMatchIds` | UGC that powers cards, safety filtering, and archived chat visibility | UGC | Same as above | Cloud Function now removes Storage objects + moderation logs when photos are removed; monitor for failures. |
-| Intent & lifestyle | `lookingFor`, `relationshipIntent`, `dealBreakers`, `drinkingHabit`, `smokingHabit`, `goingOutPreference`, `religion`, `petPreference`, `hasPets`, `heightInInches`, `shareHeight`, `preferredHeightMinInches`, `preferredHeightMaxInches` | Compatibility inputs for discovery/matching and match-only profile context; `shareHeight` controls whether height is shown publicly while relationship/lifestyle/pet/religion fields are shared only with matches | Basic + Sensitive (religion/lifestyle choices) | Stored until profile deletion; no automatic pruning | Ensure UI copy clarifies optionality; add deletion controls and review whether any of these need stronger consent. |
-| Discovery preferences | `scope`, `campusRadiusMiles`, `stateRadiusMiles`, `crushDropOptIn`, `autoMatchOptIn` (legacy), `timeZone`, `schoolTimeZone` | Controls matching radius, Crush Drop participation, and local drop schedule | Operational + Sensitive (time zone implicitly reveals region) | Until user edits; time zone updates when device/school change | Surface in privacy dashboard with explanations. Document how to disable drops when traveling. |
+| Intent & lifestyle | `lookingFor`, `connectionGoals`, `primaryConnectionGoal`, `relationshipPreferences`, `roommatePreferences`, `studyPreferences`, `dealBreakers`, `drinkingHabit`, `smokingHabit`, `goingOutPreference`, `religion`, `petPreference`, `hasPets` | Compatibility inputs for discovery/pairing; intent-specific preferences drive Crush Drop scoring and are not shared outside matching context; lifestyle/pet/religion fields are shared only with matches | Basic + Sensitive (religion/lifestyle choices) | Stored until profile deletion; no automatic pruning | Ensure UI copy clarifies optionality; add deletion controls and review whether any of these need stronger consent. |
+| Discovery preferences | `scope`, `campusRadiusMiles`, `stateRadiusMiles`, `crushDropOptIn`, `autoMatchOptIn` (legacy), `timeZone`, `schoolTimeZone` | Controls pairing radius, Crush Drop participation, and local drop schedule | Operational + Sensitive (time zone implicitly reveals region) | Until user edits; time zone updates when device/school change | Surface in privacy dashboard with explanations. Document how to disable drops when traveling. |
 | Crush Drop windows | `crushDropWindows.{windowId}.dateKey/windowInstanceId/status/label/scheduledAt/scheduledMinute/readyAt/readyNotifiedAt/noMatchNotifiedAt/retryAfter/retryCount/expiresAt/reason`, `autoMatchWindows` (legacy), `crushDropReadyDateKey`, `crushDropReadyWindowId`, `crushDropNoMatchKeys`, `crushDropPairedDateKey`, `crushDropPairedIds`, `lastCrushDropAttempt`, `lastAutoMatchAttempt`, `lastCrushDropAt`, `pendingSpotlightMatchIds` | Tracks scheduling, readiness, outcomes, and pending spotlight reveals for each daily drop window | Operational | Per-window fields overwrite daily; readiness/no-match keys currently persist without cleanup | Clients render countdowns/status/ready states from this set; `pendingSpotlightMatchIds` clears after a spotlight is seen, responded to, or expired; add TTL or periodic cleanup for historical no-match/ready keys. |
 | Notifications | `notifyMatches`, `notifyMessages`, `notifyCrushDrop`, `notifyAutoMatch`, `fcmTokens`, `fcmTokenLastSeen`, `badgeUnreadByMatch`, `badgeUnreadMessages`, `badgePendingDrops`, `badgeTotal` | Delivery controls for push notifications | Operational | Tokens linger until explicitly removed; last-seen map not pruned | Add scheduled cleanup using `fcmTokenLastSeen` and remove stale tokens automatically. |
 | Verification state | `phoneVerified`, `eduVerified`, `updatedAt`, `lastCrushDropAt` | Gate access to features and Crush Drop cadence | Sensitive | Indefinite | Consider logging verification timestamp for audit. |
+| Legal & consent | `termsAcceptedAt`, `privacyPolicyAcceptedAt` | Record acceptance of Terms of Service and Privacy Policy shown in onboarding | Operational | Until account deletion | Add versioned acceptance if policies change. |
 | Safety & presence | `online`, `lastActiveAt`, `location` (`latitude`, `longitude`, `source`, `updatedAt`) | Presence indicator, location-based feed, harassment mitigation | Sensitive | Location refreshed max every 30 min; stored indefinitely | Add TTL or precision-reduction policy; make opt-out explicit. |
 | App preferences | `themePreference`, `brightnessPreference` | Persist theme selection (school vs standard) and system/forced brightness choice | Operational | Until user edits or resets settings | Keep consistent between platforms and surface in settings/privacy dashboard. |
 
@@ -82,7 +83,7 @@ When blocking, the app also updates `users.blockedUserIds` and deletes overlappi
 ## Collection `swipes`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
-| `viewerId`, `targetId`, `decision` (`like`/`pass`), `createdAt` | Legacy record of swipe activity | Operational | Viewer read-only; writes disabled globally | Currently only retained for audit/backfill. Plan TTL (e.g., 90 days) or migration to delete after final analytics review. |
+| `viewerId`, `targetId`, `decision` (`wave`/`pass`, legacy `like`), `createdAt` | Legacy record of swipe activity | Operational | Viewer read-only; writes disabled globally | Currently only retained for audit/backfill. Plan TTL (e.g., 90 days) or migration to delete after final analytics review. |
 
 ## Collection `crushDropShortlists`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
@@ -102,12 +103,12 @@ When blocking, the app also updates `users.blockedUserIds` and deletes overlappi
 ## Collection `match_tombstones`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
-| `participants` (array of UIDs), `archivedAt` | Prevent rematching after a match is deleted | Operational + Basic | Backend only | Retention policy TBD; consider TTL or anonymization strategy. |
+| `participants` (array of UIDs), `archivedAt` | Prevent repeat matches after a match is deleted | Operational + Basic | Backend only | Retention policy TBD; consider TTL or anonymization strategy. |
 
 ## Collection `mlEvents`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
-| `type`, `schemaVersion`, `createdAt`, `expiresAt`, `matchId`, `userId`, `candidateId`, `participants`, `windowId`, `windowLabel`, `dateKey`, `timeZone`, `source`, `groupId`, `passId`, `exploration`, `matcherVersion`, `score`, `scoreComponents`, `scorePenalties`, `distanceMiles`, `radiusMiles`, `radiusLimit`, `responseMs`, `timeToUnlockMs`, `timeToExpireMs` | Matching event log for Crush Drop impressions, responses, and outcomes; used for ML training and analytics | Operational + Basic + Sensitive (derived) | Backend only | TTL via `expiresAt` (target 180 days); ensure Firestore TTL configured. |
+| `type`, `schemaVersion`, `createdAt`, `expiresAt`, `matchId`, `userId`, `candidateId`, `participants`, `windowId`, `windowLabel`, `dateKey`, `timeZone`, `source`, `groupId`, `passId`, `exploration`, `matcherVersion`, `pairingIntent`, `pairingIntentSource`, `score`, `scoreComponents`, `scorePenalties`, `distanceMiles`, `radiusMiles`, `radiusLimit`, `responseMs`, `timeToUnlockMs`, `timeToExpireMs` | Matching event log for Crush Drop impressions, responses, and outcomes; used for ML training and analytics | Operational + Basic + Sensitive (derived) | Backend only | TTL via `expiresAt` (target 180 days); ensure Firestore TTL configured. |
 
 ## Collection `photo_embeddings`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
@@ -117,7 +118,7 @@ When blocking, the app also updates `users.blockedUserIds` and deletes overlappi
 ## Collection `user_embeddings`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
-| `userId`, `embedding` (array), `embeddingDim`, `sourceCount`, `model`, `updatedAt` | Aggregated photo embeddings for real-time matching | Sensitive (derived) | Backend only | Rebuilt on photo changes and removed on account deletion. |
+| `userId`, `embedding` (array), `embeddingDim`, `sourceCount`, `model`, `updatedAt` | Aggregated photo embeddings for real-time pairing | Sensitive (derived) | Backend only | Rebuilt on photo changes and removed on account deletion. |
 
 ## Collection `matches`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
@@ -127,7 +128,7 @@ When blocking, the app also updates `users.blockedUserIds` and deletes overlappi
 ## Subcollection `matches/{matchId}/participants`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
 | --- | --- | --- | --- | --- |
-| `relationshipIntent`, `smokingHabit`, `drinkingHabit`, `goingOutPreference`, `hasPets`, `petPreference`, `religion`, `updatedAt` | Match-only compatibility context shown in chat profile previews | Basic + Sensitive (religion/lifestyle choices) | Match participants only | Deleted when match is removed; ensure sync stays current when profiles change. |
+| `smokingHabit`, `drinkingHabit`, `goingOutPreference`, `hasPets`, `petPreference`, `religion`, `updatedAt` | Match-only compatibility context shown in chat profile previews | Basic + Sensitive (religion/lifestyle choices) | Match participants only | Deleted when match is removed; ensure sync stays current when profiles change. |
 
 ## Subcollection `matches/{matchId}/presence`
 | Fields | Purpose | Sensitivity | Access | Retention / TODO |
@@ -213,7 +214,7 @@ Maintained only by Cloud Functions, clients never read/write directly.
 
 ### Crush Drop scoring signals
 
-The campus-first matcher evaluates each drop on the fly using existing fields already listed in this inventory (`photosCount`, `lastActiveAt`, `major`, `age`, `graduationYear`, `clubs`, `athletics`, `inGreekLife`, `scope`, `campusRadiusMiles`, `stateRadiusMiles`, and coarse `location`). We now log derived score components (not raw profile fields) into `mlEvents` for matching analytics and ML training, with a TTL target of 180 days. Documenting the signal list here ensures privacy/legal reviewers know which inputs feed the automated pairing logic.
+The campus-first matcher evaluates each drop on the fly using existing fields already listed in this inventory (`photosCount`, `lastActiveAt`, `major`, `age`, `graduationYear`, `clubs`, `athletics`, `inGreekLife`, `scope`, `campusRadiusMiles`, `stateRadiusMiles`, and coarse `location`). We now log derived score components (not raw profile fields) into `mlEvents` for pairing analytics and ML training, with a TTL target of 180 days. Documenting the signal list here ensures privacy/legal reviewers know which inputs feed the automated pairing logic.
 
 ## Open gaps / decisions
 1. **Retention:** No automated TTL/cleanup jobs yet for `edu_verification`, matches/messages/activity, legacy `swipes`, drop notifications, or match tombstones; only account deletion clears data today. Shortlists are cleaned after ~3 days. Define retention windows and implement Firestore TTL/scheduled cleanups (including token aging).
