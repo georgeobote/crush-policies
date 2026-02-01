@@ -28,7 +28,7 @@ If you’re locked out, email `hello@crushso.com` from the address/number tied t
 
 - **Not getting an SMS code:** Double-check your number, signal, and that you can receive SMS. If it still won’t send, email us with your country + carrier.
 - **`.edu` verification email not arriving:** Check spam/junk and search your inbox for “Crush”. Some school domains delay external mail; try again after a few minutes.
-- **Crush Drops paused:** Drops require verified SMS + `.edu`, your gender + “looking for” set, and at least **3 photos** on your profile. Add what’s missing and drops will resume.
+- **Crush Drops paused:** Drops require verified SMS + `.edu`, your gender + bucketed “looking for” set, and at least **3 photos** on your profile. Add what’s missing and drops will resume.
 - **Notifications missing:** Confirm notifications are enabled in-app and in your phone’s system settings.
 
 ## Safety
