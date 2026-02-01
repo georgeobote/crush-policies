@@ -9,7 +9,7 @@ These Terms of Service ("Terms") govern your use of Crush, the campus connection
 1. You must be at least 18 years old, currently enrolled at an accredited college or university, and able to verify a valid `.edu` email address.
 2. You must provide accurate registration information and keep it up to date (display name, phone number, `.edu` email, school, graduation year, etc.). If you share optional compatibility signals (connection goals, religion, pets, lifestyle, deal breakers), you consent to us using them for pairing.
 3. Each user may maintain one account. You are responsible for safeguarding your login credentials and device. Notify us immediately of unauthorized use.
-4. Crush Drops require verified SMS + `.edu`, a set gender + “looking for” selection, and at least three approved photos. Falling below those gates may pause access to Crush Drop features until resolved.
+4. Crush Drops require verified SMS + `.edu`, a set gender + bucketed “looking for” selection, and at least three approved photos. Falling below those gates may pause access to Crush Drop features until resolved.
 
 ## 2. Verification & Access
 
