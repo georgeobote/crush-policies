@@ -1,6 +1,6 @@
 # How Crush Works
 
-_Last updated: 2026-01-04_
+_Last updated: 2026-01-31_
 
 Think of this page as the friendlier, product-focused tour of Crush. We'll walk through what students see, why the daily drops feel intentional, and how we keep the community safe, without dumping raw technical docs on you. Need the fine print? Check the [Terms of Service](https://georgeobote.github.io/crush-policies/terms-of-service), [Privacy Policy](https://georgeobote.github.io/crush-policies/privacy-policy), or the engineering-heavy [data inventory](https://georgeobote.github.io/crush-policies/data-inventory).
 
@@ -8,7 +8,7 @@ Think of this page as the friendlier, product-focused tour of Crush. We'll walk 
 
 1. **Download & sign in:** Grab the app, confirm your phone with SMS, and you’re in. Behind the scenes we light up a Firebase session and register your device for notifications.
 2. **`.edu` verification:** Because it’s a college-only community, we ask for a school email. Tap “Send code,” grab the OTP from your inbox, and that unlocks discovery. No `.edu`, no Crush.
-3. **Build your profile:** Add three or more photos (needed to keep Crush Drops active), a bio, major, grad year, connection goals, who you're looking to meet, athletics/clubs, Greek life, deal breakers, pet preference/has pets, religion, and lifestyle choices (smoking, drinking, going out). You also pick campus/state/nationwide scopes and radius sliders so the matcher knows where to look.
+3. **Build your profile:** Add three or more photos (needed to keep Crush Drops active), a bio, major, grad year, connection goals, who you're looking to meet by bucket (Romantic, Housing, Social/Academic), athletics/clubs, Greek life, deal breakers, pet preference/has pets, religion, and lifestyle choices (smoking, drinking, going out). You also pick campus/state/nationwide scopes and radius sliders so the matcher knows where to look.
 4. **School vibes:** Once the `.edu` is confirmed, we map it to your school so colors, mascots, and drop windows all feel tailored to that campus and time zone.
 
 ## 2. Profile signals & themes
@@ -21,7 +21,7 @@ Think of this page as the friendlier, product-focused tour of Crush. We'll walk 
 ## 3. Crush Drop Windows
 
 - **Three drop slots:** Morning (10–11 AM), afternoon (3–4 PM), and evening (8–9 PM) in your school’s time zone. Each day we hash the time zone + date + window to pick one shared minute so the reveal feels like a “BeReal” moment for everyone nearby.
-- **Stay photo-ready:** Drops only run if you keep the `Crush Drop` toggle on, maintain at least three approved photos, and have verified SMS + `.edu` with gender + “looking for” set. Fall below that, and we pause things until you’re ready again.
+- **Stay photo-ready:** Drops only run if you keep the `Crush Drop` toggle on, maintain at least three approved photos, and have verified SMS + `.edu` with gender + bucketed “looking for” set. Fall below that, and we pause things until you’re ready again.
 - **Response timers:** Match windows stay open until local midnight with ready/reminder/expire notifications. If neither side answers in time, we roll forward and log it so fairness and analytics stay intact.
 - **Transparent history:** Every window stores whether it was upcoming, pairing, match ready, no match, or skipped so you can track how the day went and we can keep drops fair.
 
@@ -29,7 +29,7 @@ Think of this page as the friendlier, product-focused tour of Crush. We'll walk 
 
 1. **Campus-first always:** We start with your campus, then expand to state and nationwide if needed. Distance penalties for off-campus/out-of-state matches help keep long-distance intentional, and we occasionally sample a wider radius to avoid stale pools.
 2. **Balanced scoring:** Light recent activity + profile freshness, distance, shared majors/clubs, Greek life, age + grad year alignment, connection goals, religion, pets, and lifestyle signals (smoking, drinking, going out) feed the behind-the-scenes score.
-3. **Guardrails before scoring:** We enforce mutual gender preferences, deal breakers (same school only, Greek-life only/skip, athlete-only/skip), block lists, same-day repeat-pair blocks, and existing-match checks before we ever surface a candidate.
+3. **Guardrails before scoring:** We enforce mutual gender preferences for the pairing bucket, deal breakers (same school only, Greek-life only/skip, athlete-only/skip), block lists, same-day repeat-pair blocks, and existing-match checks before we ever surface a candidate.
 4. **Shared reveal moments:** As soon as a match is confirmed, both people get slotted into the same upcoming drop window so the spotlight reveal happens together.
 
 ## 5. Spotlight Reveal & Decisions
