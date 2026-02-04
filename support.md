@@ -16,7 +16,6 @@ When you email, include the phone number on your account (and your school email 
 - How Crush works: https://georgeobote.github.io/crush-policies/how-crush-works
 - Privacy Policy: https://georgeobote.github.io/crush-policies/privacy-policy
 - Terms of Service: https://georgeobote.github.io/crush-policies/terms-of-service
-- Data inventory (technical): https://georgeobote.github.io/crush-policies/data-inventory
 
 ## Account deletion
 
