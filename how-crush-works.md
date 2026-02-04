@@ -2,8 +2,7 @@
 
 _Last updated: 2026-01-31_
 
-Think of this page as the friendlier, product-focused tour of Crush. We'll walk through what students see, why the daily drops feel intentional, and how we keep the community safe, without dumping raw technical docs on you. Need the fine print? Check the [Terms of Service](https://georgeobote.github.io/crush-policies/terms-of-service), [Privacy Policy](https://georgeobote.github.io/crush-policies/privacy-policy), or the engineering-heavy [data inventory](https://georgeobote.github.io/crush-policies/data-inventory).
-
+Think of this page as the friendlier, product-focused tour of Crush. We'll walk through what students see, why the daily drops feel intentional, and how we keep the community safe, without dumping raw technical docs on you. Need the fine print? Check the [Terms of Service](https://georgeobote.github.io/crush-policies/terms-of-service) and [Privacy Policy](https://georgeobote.github.io/crush-policies/privacy-policy).
 ## 1. Eligibility & Onboarding
 
 1. **Download & sign in:** Grab the app, confirm your phone with SMS, and you’re in. Behind the scenes we light up a Firebase session and register your device for notifications.
@@ -54,7 +53,6 @@ Think of this page as the friendlier, product-focused tour of Crush. We'll walk 
 ## 8. Data & Transparency
 
 - We only store what’s spelled out in the [Privacy Policy](https://georgeobote.github.io/crush-policies/privacy-policy) and guard it with Firebase security rules (public profiles are only visible to signed-in students).
-- Curious about the nitty-gritty? The [data inventory](https://georgeobote.github.io/crush-policies/data-inventory) lists every collection, field (including lifestyle + compatibility signals), and retention promise.
 - Questions, audits, or press inquiries: reach us via the support flow in the app or email `hello@crushso.com`.
 
 ---
