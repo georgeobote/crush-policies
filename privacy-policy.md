@@ -2,7 +2,7 @@
 
 _Last updated: 2026-01-31_
 
-Crush ("we", "us", "our") is a campus connection app that uses SMS login, `.edu` email verification, daily Crush Drop windows (three scheduled reveal minutes per day hashed by time zone), and in-app chat on Firebase + Cloud Functions. There is no swipe deck in the current release. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you. See [Data Inventory](https://georgeobote.github.io/crush-policies/data-inventory) for a field-by-field breakdown; if anything conflicts, this policy controls.
+Crush ("we", "us", "our") is a campus connection app that uses SMS login, `.edu` email verification, daily Crush Drop windows (three scheduled reveal minutes per day hashed by time zone), and in-app chat on Firebase + Cloud Functions. There is no swipe deck in the current release. This Privacy Policy explains what data we collect, how we use and share it, and the choices and rights available to you.
 
 ## Information We Collect
 
@@ -77,14 +77,3 @@ We will update this policy when we add new fields, processors, or retention sche
 ## Contact
 
 Email hello@crushso.com for questions, data requests, or privacy complaints. If you are in the EU/UK, you may also contact your local supervisory authority.
-
-## Open Gaps & Roadmap
-
-Per [Data Inventory](https://georgeobote.github.io/crush-policies/data-inventory), the following improvements are in progress:
-
-- Automated retention for verification attempts, drop activity, drop notification queue entries, match tombstones, reports, tokens, and inactive matches/messages.
-- Privacy dashboard for export/delete/location precision controls.
-- Lifecycle rules for orphaned Storage uploads.
-- Admin access logging and monitoring for token purge jobs.
-
-We will update this policy once those controls are live.
