@@ -1,8 +1,8 @@
 # Terms of Service
 
-_Last updated: 2026-01-20_
+_Last updated: 2026-02-12_
 
-These Terms of Service ("Terms") govern your use of Crush, the campus connection experience operated by Unyime George Obote II. By creating an account, accessing the app, or participating in any feature (SMS login, `.edu` verification, Crush Drop windows, matches, chat, push notifications), you agree to these Terms. If you disagree, do not use the service.
+These Terms of Service ("Terms") govern your use of Crush, the campus connection experience operated by Unyime George Obote II. These Terms also serve as the app's End User License Agreement (EULA). By creating an account, accessing the app, or participating in any feature (SMS login, `.edu` verification, Crush Drop windows, matches, chat, push notifications), you agree to these Terms. If you disagree, do not use the service.
 
 ## 1. Eligibility & Accounts
 
@@ -36,7 +36,7 @@ These Terms of Service ("Terms") govern your use of Crush, the campus connection
 
 ## 5. Safety & Reporting
 
-1. Use the in-app safety tools to block or report users who violate these Terms. Blocks are mutual and remove visibility in Crush Drop results and matches.
+1. Crush has zero tolerance for objectionable content or abusive behavior. Use the in-app safety tools to block or report users who violate these Terms. Blocks are mutual and remove visibility in Crush Drop results and matches.
 2. Reports may trigger limited disclosure to trust & safety personnel and, when required, law enforcement.
 3. We aim to review and respond to reports within 24 hours.
 4. We do not guarantee compatibility or personal safety; meet others responsibly and follow local guidance.
